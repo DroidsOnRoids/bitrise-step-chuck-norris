@@ -1,0 +1,4 @@
+.bitrise*
+.envstore.yml
+.gows.user.yml
+.idea/

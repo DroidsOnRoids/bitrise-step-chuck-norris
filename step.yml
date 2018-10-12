@@ -1,0 +1,48 @@
+title: |-
+  Chuck Norris
+summary: |
+  Adds random Chuck Norris jokes to build log.
+description: |
+  Uses [Chuck Norris Jokes Api](https://api.chucknorris.io) or other compatible one to add random joke to build log.
+website: https://github.com/DroidsOnRoids/bitrise-step-chuck-norris
+source_code_url: https://github.com/DroidsOnRoids/bitrise-step-chuck-norris
+support_url: https://github.com/DroidsOnRoids/bitrise-step-chuck-norris/issues
+host_os_tags:
+  - osx-10.10
+  - ubuntu-16.04
+
+type_tags:
+  - utility
+
+is_requires_admin_user: false
+is_always_run: true
+is_skippable: true
+run_if: ""
+
+toolkit:
+  go:
+    package_name: github.com/DroidsOnRoids/bitrise-step-chuck-norris
+
+inputs:
+  - category:
+    opts:
+      title: "Joke category, optional."
+      summary: |
+        Optional category of the joke, see [list of available categories](https://api.chucknorris.io/jokes/categories).
+        If empty joke won't be restricted to any category.
+      is_expand: true
+      is_required: false
+  - api_base_url: "https://api.chucknorris.io"
+    opts:
+      title: "API base URL"
+      summary: |
+        Base URL of the API. Defaults to _https://api.chucknorris.io_. See
+        [chuck-api](https://github.com/chucknorris-io/chuck-api) for more info about running your own backend.
+      is_expand: true
+      is_required: true
+
+outputs:
+- CHUCK_NORRIS_JOKE:
+  opts:
+    title: "Random Chuck Norris joke text"
+    summary: Random joke about Chuck Norris from API
