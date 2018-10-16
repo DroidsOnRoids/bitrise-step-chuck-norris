@@ -32,7 +32,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	log.Donef("%s", joke)
+	log.Successf("%s", joke)
 
 	if err := exportEnvironmentWithEnvman(joke); err != nil {
 		log.Errorf("Could not export joke, error: %s\n", err)
@@ -52,17 +52,12 @@ func getRandomJoke(config Config) (string, error) {
 	}
 
 	defer func() {
-		if response.Body.Close() != nil {
-			log.Warnf("Failed to close response body, error: %s", response.Body.Close())
+		if err := response.Body.Close(); err != nil {
+			log.Warnf("Failed to close response body, error: %s", err)
 		}
 	}()
 
-	if response.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("server returned an error: %s", response.Status)
-	}
-
-	content, err := ioutil.ReadAll(response.Body)
-	return string(content), err
+	return readJokeFromResponse(response)
 }
 
 func buildJokeRequest(config Config) (*http.Request, error) {
@@ -78,12 +73,6 @@ func buildJokeRequest(config Config) (*http.Request, error) {
 
 	request.Header.Set("Accept", "text/plain")
 	return request, nil
-}
-
-func getJoke(request *http.Request) (*http.Response, error) {
-	client := &http.Client{}
-	client.Timeout = 20 * time.Second
-	return client.Do(request)
 }
 
 func buildJokeURL(config Config) (*url.URL, error) {
@@ -102,6 +91,21 @@ func buildJokeURL(config Config) (*url.URL, error) {
 	}
 
 	return jokeURL, nil
+}
+
+func getJoke(request *http.Request) (*http.Response, error) {
+	client := &http.Client{}
+	client.Timeout = 20 * time.Second
+	return client.Do(request)
+}
+
+func readJokeFromResponse(response *http.Response) (string, error) {
+	if response.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("server returned an error: %s", response.Status)
+	}
+
+	content, err := ioutil.ReadAll(response.Body)
+	return string(content), err
 }
 
 func exportEnvironmentWithEnvman(value string) error {

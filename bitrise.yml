@@ -59,6 +59,11 @@ workflows:
     - go-list: {}
     - golint: {}
     - errcheck: {}
+    - script:
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            go vet
     - go-test: {}
     - change-workdir:
         title: Switch working dir to test / _tmp dir
@@ -73,12 +78,6 @@ workflows:
         - is_create_path: true
     - path::./:
         title: Step Test
-        description: |-
-          The example input has a default value,
-          you can overwrite it if you want to, just like we did below,
-          but the step would use the default value specified in the `step.yml`
-          file if you would not specify another value.
-        run_if: "true"
     - script:
         title: Verify environment
         inputs:
