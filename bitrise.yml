@@ -4,7 +4,6 @@ project_type: ""
 app:
   envs:
   - BITRISE_STEP_ID: chuck-norris
-  - BITRISE_STEP_VERSION: 1.0.0
   - BITRISE_STEP_GIT_CLONE_URL: https://github.com/DroidsOnRoids/bitrise-step-chuck-norris.git
   - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
 workflows:
@@ -17,33 +16,11 @@ workflows:
             set -ex
             stepman audit --step-yml ./step.yml
   share-this-step:
-    description: |-
-      If this is the first time you try to share a Step you should
-      first call: $ bitrise share
-
-      This will print you a guide, and information about how Step sharing
-      works. Please read it at least once!
-
-      As noted in the Step sharing guide you'll have to fork the
-      StepLib you want to share this step into. Once you're done with forking
-      the repository you should set your own fork's git clone URL
-      in the `.bitrise.secrets.yml` file, or here in the `envs` section,
-      as the value of the `MY_STEPLIB_REPO_FORK_GIT_URL` environment.
-
-      You're now ready to share this Step, just make sure that
-      the `BITRISE_STEP_ID` and `BITRISE_STEP_VERSION`
-      environments are set to the desired values!
-
-      To share this Step into a StepLib you can just run: $ bitrise run share-this-step
-
-      Once it finishes the only thing left is to actually create a Pull Request,
-      the way described in the guide printed at the end of the process.
     before_run:
     - audit-this-step
     envs:
     - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
     - BITRISE_STEP_ID: $BITRISE_STEP_ID
-    - BITRISE_STEP_VERSION: $BITRISE_STEP_VERSION
     - BITRISE_STEP_GIT_CLONE_URL: $BITRISE_STEP_GIT_CLONE_URL
     steps:
     - script:
@@ -52,7 +29,7 @@ workflows:
             #!/bin/bash
             set -ex
             bitrise share start -c "${MY_STEPLIB_REPO_FORK_GIT_URL}"
-            bitrise share create --stepid "${BITRISE_STEP_ID}" --tag "${BITRISE_STEP_VERSION}" --git "${BITRISE_STEP_GIT_CLONE_URL}"
+            bitrise share create --stepid "${BITRISE_STEP_ID}" --tag $(git describe --tags --exact-match) --git "${BITRISE_STEP_GIT_CLONE_URL}"
             bitrise share finish
   test:
     steps:
